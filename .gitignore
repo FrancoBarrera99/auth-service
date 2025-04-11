@@ -1,0 +1,54 @@
+# Env
+.env
+
+# Bin
+/auth-service
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go compile
+*.o
+*.a
+*.out
+
+# Builds and dependencies
+/bin/
+/pkg/
+/vendor/
+
+# Cache
+*.test
+*.prof
+
+# Sensible
+*.secret
+*.key
+*.pem
+
+# Logs y temp
+*.log
+*.log.*
+tmp/
+temp/
+
+# Directorios de Docker generados
+/docker-compose.override.yml
+/docker-compose.yml.bak
+
+# Archivos de editores
+*.swp
+*.swo
+.vscode/
+.idea/
+*.iml
+
+# Cobertura de pruebas
+coverage.txt
+cover.out
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

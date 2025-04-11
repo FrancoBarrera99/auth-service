@@ -5,10 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - TRANSPORT_TYPE=http
-      - STORAGE_TYPE=postgres
-      - DSN=postgres://postgres:postgres@db:5432/authdb?sslmode=disable
+    env_file:
+      - .env
     depends_on:
       - db
     networks:
@@ -16,10 +14,8 @@ services:
 
   db:
     image: postgres:15
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=authdb
+    env_file:
+      - .env
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
