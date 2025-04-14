@@ -5,7 +5,7 @@ import (
 )
 
 type UserStorage interface {
-	SaveUser(user m.User) error
+	CreateUser(username string, password string, email string) (*m.User, error)
 	GetUserByEmail(email string) (*m.User, error)
 	Close() error
 }
