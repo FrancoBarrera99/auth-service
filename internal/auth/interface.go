@@ -5,11 +5,11 @@ import (
 )
 
 type AuthService interface {
-	Login(creds model.Credentials) (string, error)
+	Login(creds model.Credentials) (*model.User, string, error)
 	Register(username string, password string) (string, error)
 	ValidateToken(token string) (bool, error)
 	GetAuthURL(method string, state string) (string, error)
-	HashPassword(password string) (string, error)
+	hashPassword(password string) (string, error)
 }
 
 type AuthStrategy interface {

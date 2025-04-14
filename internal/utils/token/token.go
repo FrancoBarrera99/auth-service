@@ -1,30 +1,24 @@
 package token
 
 import (
+	"fmt"
 	"time"
 
-	"github.com/FrancoBarrera99/auth-service/internal/auth/model"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type Claims struct {
-	ID       string
-	Username string
-	Email    string
-	Password string
+	ID string
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(user *model.User, secret string) (string, error) {
+func GenerateJWT(id string, secret string) (string, error) {
 	claims := Claims{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Password: user.Password,
+		ID: id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			Subject:   user.ID,
+			Subject:   id,
 		},
 	}
 
@@ -36,4 +30,22 @@ func GenerateJWT(user *model.User, secret string) (string, error) {
 	}
 
 	return signedToken, nil
+}
+
+func ValidateJWT(token string, secret string) (*Claims, error) {
+	tkn, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method")
+		}
+		return secret, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if claims, ok := tkn.Claims.(*Claims); ok && tkn.Valid {
+		return claims, nil
+	}
+	return nil, nil
 }

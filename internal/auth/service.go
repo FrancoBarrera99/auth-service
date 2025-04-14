@@ -29,18 +29,23 @@ func NewService(stor storage.UserStorage) (*Service, error) {
 	return &Service{stor: stor, strats: strats, jwtSecret: secret}, nil
 }
 
-func (s *Service) Login(creds model.Credentials) (string, error) {
+func (s *Service) Login(creds model.Credentials) (*model.User, string, error) {
 	strat, ok := s.strats[creds.Method]
 	if !ok {
-		return "", fmt.Errorf("unsupported method %s", creds.Method)
+		return nil, "", fmt.Errorf("unsupported method %s", creds.Method)
 	}
 
 	user, _, err := strat.Validate(creds)
 	if err != nil {
-		return "", err
+		return nil, "", err
 	}
 
-	return token.GenerateJWT(user, s.jwtSecret)
+	tkn, err := token.GenerateJWT(user.ID, s.jwtSecret)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, tkn, nil
 }
 
 func (s *Service) Register(username string, password string, email string) (string, error) {
@@ -54,7 +59,7 @@ func (s *Service) Register(username string, password string, email string) (stri
 		return "", fmt.Errorf("password must be at least 8 characters long")
 	}
 
-	hashedPw, err := s.HashPassword(password)
+	hashedPw, err := s.hashPassword(password)
 	if err != nil {
 		return "", err
 	}
@@ -64,18 +69,18 @@ func (s *Service) Register(username string, password string, email string) (stri
 		return "", err
 	}
 
-	return token.GenerateJWT(user, s.jwtSecret)
+	return token.GenerateJWT(user.ID, s.jwtSecret)
 }
 
-func (s *Service) ValidateToken(token string) (bool, error) {
-	return false, nil
+func (s *Service) ValidateToken(token string) (*token.Claims, error) {
+	return nil, nil
 }
 
 func (s *Service) GetAuthURL(method string, state string) (string, error) {
 	return "", nil
 }
 
-func (s *Service) HashPassword(password string) (string, error) {
+func (s *Service) hashPassword(password string) (string, error) {
 	if password == "" {
 		return "", fmt.Errorf("")
 	}
