@@ -72,8 +72,8 @@ func (s *Service) Register(username string, password string, email string) (stri
 	return token.GenerateJWT(user.ID, s.jwtSecret)
 }
 
-func (s *Service) ValidateToken(token string) (*token.Claims, error) {
-	return nil, nil
+func (s *Service) ValidateToken(tokenString string) (*token.Claims, error) {
+	return token.ValidateJWT(tokenString, s.jwtSecret)
 }
 
 func (s *Service) GetAuthURL(method string, state string) (string, error) {

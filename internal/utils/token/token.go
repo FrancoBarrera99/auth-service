@@ -32,8 +32,8 @@ func GenerateJWT(id string, secret string) (string, error) {
 	return signedToken, nil
 }
 
-func ValidateJWT(token string, secret string) (*Claims, error) {
-	tkn, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (interface{}, error) {
+func ValidateJWT(tokenString string, secret string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")
 		}
@@ -44,7 +44,7 @@ func ValidateJWT(token string, secret string) (*Claims, error) {
 		return nil, err
 	}
 
-	if claims, ok := tkn.Claims.(*Claims); ok && tkn.Valid {
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
 		return claims, nil
 	}
 	return nil, nil
