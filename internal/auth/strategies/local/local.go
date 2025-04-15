@@ -13,7 +13,7 @@ func NewLocalAuth(stor storage.UserStorage) *LocalAuth {
 	return &LocalAuth{stor: stor}
 }
 
-func (l *LocalAuth) Validate(creds model.Credentials) (*model.User, string, error) {
+func (l *LocalAuth) ValidateCredentials(creds model.Credentials) (*model.User, string, error) {
 	return nil, "", nil
 }
 

@@ -13,6 +13,6 @@ type AuthService interface {
 }
 
 type AuthStrategy interface {
-	Validate(creds model.Credentials) (*model.User, string, error)
+	ValidateCredentials(creds model.Credentials) (*model.User, string, error)
 	GetAuthURL(method string, state string) (string, error)
 }

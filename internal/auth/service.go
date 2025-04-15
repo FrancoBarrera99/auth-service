@@ -35,7 +35,7 @@ func (s *Service) Login(creds model.Credentials) (*model.User, string, error) {
 		return nil, "", fmt.Errorf("unsupported method %s", creds.Method)
 	}
 
-	user, _, err := strat.Validate(creds)
+	user, _, err := strat.ValidateCredentials(creds)
 	if err != nil {
 		return nil, "", err
 	}
