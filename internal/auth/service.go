@@ -48,23 +48,23 @@ func (s *Service) Login(creds model.Credentials) (*model.User, string, error) {
 	return user, tkn, nil
 }
 
-func (s *Service) Register(username string, password string, email string) (string, error) {
-	if username == "" || password == "" || email == "" {
+func (s *Service) Register(reg model.UserRegister) (string, error) {
+	if reg.Username == "" || reg.Password == "" || reg.Email == "" {
 		return "", fmt.Errorf("all fields are required for register a new user")
 	}
-	if !strings.Contains(email, "@") {
+	if !strings.Contains(reg.Email, "@") {
 		return "", fmt.Errorf("invalid email format")
 	}
-	if len(password) < 8 {
+	if len(reg.Password) < 8 {
 		return "", fmt.Errorf("password must be at least 8 characters long")
 	}
 
-	hashedPw, err := s.hashPassword(password)
+	hashedPw, err := s.hashPassword(reg.Password)
 	if err != nil {
 		return "", err
 	}
 
-	user, err := s.stor.CreateUser(username, hashedPw, email)
+	user, err := s.stor.CreateUser(reg.Username, hashedPw, reg.Email)
 	if err != nil {
 		return "", err
 	}
@@ -72,8 +72,12 @@ func (s *Service) Register(username string, password string, email string) (stri
 	return token.GenerateJWT(user.ID, s.jwtSecret)
 }
 
-func (s *Service) ValidateToken(tokenString string) (*token.Claims, error) {
-	return token.ValidateJWT(tokenString, s.jwtSecret)
+func (s *Service) ValidateToken(tokenString string) (bool, error) {
+	_, err := token.ValidateJWT(tokenString, s.jwtSecret)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (s *Service) GetAuthURL(method string, state string) (string, error) {
