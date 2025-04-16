@@ -9,7 +9,6 @@ type AuthService interface {
 	Register(reg model.UserRegister) (string, error)
 	ValidateToken(tokenString string) (bool, error)
 	GetAuthURL(method string, state string) (string, error)
-	hashPassword(password string) (string, error)
 }
 
 type AuthStrategy interface {
