@@ -9,8 +9,8 @@ import (
 	"github.com/FrancoBarrera99/auth-service/internal/auth/strategies/local"
 	"github.com/FrancoBarrera99/auth-service/internal/auth/strategies/oauth"
 	"github.com/FrancoBarrera99/auth-service/internal/storage"
+	"github.com/FrancoBarrera99/auth-service/internal/utils"
 	"github.com/FrancoBarrera99/auth-service/internal/utils/token"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Service struct {
@@ -59,7 +59,7 @@ func (s *Service) Register(reg model.UserRegister) (string, error) {
 		return "", fmt.Errorf("password must be at least 8 characters long")
 	}
 
-	hashedPw, err := s.hashPassword(reg.Password)
+	hashedPw, err := utils.HashPassword(reg.Password)
 	if err != nil {
 		return "", err
 	}
@@ -82,16 +82,4 @@ func (s *Service) ValidateToken(tokenString string) (bool, error) {
 
 func (s *Service) GetAuthURL(method string, state string) (string, error) {
 	return "", nil
-}
-
-func (s *Service) hashPassword(password string) (string, error) {
-	if password == "" {
-		return "", fmt.Errorf("")
-	}
-
-	hashedPw, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", fmt.Errorf("failed to hash password")
-	}
-	return string(hashedPw), nil
 }
