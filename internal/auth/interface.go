@@ -12,6 +12,6 @@ type AuthService interface {
 }
 
 type AuthStrategy interface {
-	ValidateCredentials(creds model.Credentials) (*model.User, string, error)
+	ValidateCredentials(creds map[string]interface{}) (*model.User, error)
 	GetAuthURL(method string, state string) (string, error)
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/FrancoBarrera99/auth-service/internal/auth/model"
 	"github.com/FrancoBarrera99/auth-service/internal/auth/strategies/local"
-	"github.com/FrancoBarrera99/auth-service/internal/auth/strategies/oauth"
 	"github.com/FrancoBarrera99/auth-service/internal/storage"
 	"github.com/FrancoBarrera99/auth-service/internal/utils"
 	"github.com/FrancoBarrera99/auth-service/internal/utils/token"
@@ -22,8 +21,8 @@ type Service struct {
 func NewService(stor storage.UserStorage) (*Service, error) {
 	secret := os.Getenv("JWT_SECRET")
 	strats := map[string]AuthStrategy{
-		"local":  local.NewLocalAuth(stor),
-		"google": oauth.NewGoogleAuth(stor),
+		"local": local.NewLocalAuth(stor),
+		//"google": oauth.NewGoogleAuth(stor),
 	}
 
 	return &Service{stor: stor, strats: strats, jwtSecret: secret}, nil
@@ -35,7 +34,7 @@ func (s *Service) Login(creds model.Credentials) (*model.User, string, error) {
 		return nil, "", fmt.Errorf("unsupported method %s", creds.Method)
 	}
 
-	user, _, err := strat.ValidateCredentials(creds)
+	user, err := strat.ValidateCredentials(creds.Data)
 	if err != nil {
 		return nil, "", err
 	}

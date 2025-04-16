@@ -13,8 +13,8 @@ func NewGoogleAuth(stor storage.UserStorage) *GoogleAuth {
 	return &GoogleAuth{stor: stor}
 }
 
-func (g *GoogleAuth) ValidateCredentials(creds model.Credentials) (*model.User, string, error) {
-	return nil, "", nil
+func (g *GoogleAuth) ValidateCredentials(creds map[string]interface{}) (*model.User, error) {
+	return nil, nil
 }
 
 func (l *GoogleAuth) GetAuthURL(method string, state string) (string, error) {
